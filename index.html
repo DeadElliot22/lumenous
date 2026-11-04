@@ -1,0 +1,638 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lumenous — Liquid glass for your Android home screen</title>
+  <meta name="description" content="Lumenous is a liquid glass home screen for Android 13+, made for square keyboard phones like the Zinwa Q25 and Unihertz Titan 2. Free 7-day full trial.">
+  <meta name="theme-color" content="#0c0b18">
+
+  <!-- Link previews (iMessage, Discord, Reddit…) -->
+  <meta property="og:title" content="Lumenous — Liquid glass for your Android home screen">
+  <meta property="og:description" content="A liquid glass home screen made for square keyboard phones. Free 7-day trial.">
+  <meta property="og:image" content="https://deadelliot22.github.io/lumenous/assets/og-image.png">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="icon" href="assets/favicon.ico" sizes="any">
+  <link rel="icon" href="assets/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #0c0b18;
+      --ink: #efeff8;
+      --ink-soft: #a9abc4;
+      --ink-faint: #7c7f99;
+      --glass: rgba(255, 255, 255, 0.06);
+      --glass-strong: rgba(255, 255, 255, 0.10);
+      --edge: rgba(255, 255, 255, 0.14);
+      --edge-hi: rgba(255, 255, 255, 0.28);
+      --lavender: #b4b1ff;
+      --lavender-2: #8f8be8;
+      --violet: #7a56c8;
+      --teal: #2a8a83;
+      --radius: 26px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: "Inter", system-ui, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    img, video { display: block; max-width: 100%; }
+    a { color: inherit; }
+
+    /* The purple / teal glow from the app icon */
+    .backdrop { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+    .backdrop span { position: absolute; border-radius: 50%; filter: blur(90px); }
+    .backdrop span:nth-child(1) { width: 620px; height: 620px; background: var(--violet); opacity: .42; top: -220px; left: -180px; }
+    .backdrop span:nth-child(2) { width: 560px; height: 560px; background: var(--teal); opacity: .30; bottom: -240px; right: -160px; }
+    .backdrop span:nth-child(3) { width: 380px; height: 380px; background: #3b3f9e; opacity: .25; top: 45%; left: 55%; }
+
+    .wrap { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
+    main.wrap { overflow-x: clip; }   /* keeps the video glow from causing sideways scroll on phones */
+
+    .glass {
+      background: var(--glass);
+      border: 1px solid var(--edge);
+      border-radius: var(--radius);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, .35), inset 0 1px 0 var(--edge-hi);
+      backdrop-filter: blur(24px) saturate(150%);
+      -webkit-backdrop-filter: blur(24px) saturate(150%);
+    }
+
+    /* ---------- header ---------- */
+    header { padding: 18px 0; }
+    .nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.12rem; text-decoration: none; }
+    .brand img { width: 36px; height: 36px; border-radius: 10px; }
+    .nav-links { display: flex; gap: 22px; }
+    .nav-links a { color: var(--ink-soft); text-decoration: none; font-size: .95rem; }
+    .nav-links a:hover { color: var(--ink); }
+    @media (max-width: 560px) { .nav-links a:not(:last-child) { display: none; } }
+
+    /* ---------- hero ---------- */
+    .hero {
+      display: grid; grid-template-columns: 1.05fr 1fr; gap: 56px; align-items: center;
+      padding: 48px 0 72px;
+    }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 14px; border-radius: 999px; font-size: .85rem; font-weight: 500; color: var(--ink-soft);
+      background: var(--glass); border: 1px solid var(--edge);
+    }
+    .eyebrow b { color: var(--lavender); font-weight: 600; }
+    h1 {
+      font-size: clamp(2.4rem, 5.6vw, 4rem); line-height: 1.04; letter-spacing: -0.035em;
+      margin: 22px 0 18px; font-weight: 800;
+    }
+    h1 .shine {
+      background: linear-gradient(100deg, #ffffff 0%, var(--lavender) 45%, #7fd6cc 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .lede { font-size: clamp(1.05rem, 2vw, 1.2rem); color: var(--ink-soft); margin: 0 0 30px; max-width: 520px; }
+
+    .buttons { display: flex; flex-wrap: wrap; gap: 12px; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      min-height: 54px; padding: 0 26px; border-radius: 999px;
+      font: inherit; font-weight: 600; font-size: 1.02rem; text-decoration: none; cursor: pointer;
+      transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn svg { width: 20px; height: 20px; flex: none; }
+    .btn-primary {
+      color: #15132b; border: none;
+      background: linear-gradient(180deg, #d2d0ff, var(--lavender-2));
+      box-shadow: 0 10px 30px rgba(143, 139, 232, .35), inset 0 1px 0 rgba(255,255,255,.7);
+    }
+    .btn-glass { background: var(--glass-strong); border: 1px solid var(--edge); box-shadow: inset 0 1px 0 var(--edge-hi); }
+    .btn-glass:hover { background: rgba(255,255,255,.14); }
+    .fine { margin-top: 16px; color: var(--ink-faint); font-size: .9rem; }
+
+    /* square "screen" for the demo video */
+    .screen {
+      position: relative; padding: 14px; border-radius: 44px; max-width: 480px; margin-left: auto; width: 100%;
+    }
+    .screen video, .screen img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 32px; background: #111; }
+    .screen::after {
+      content: ""; position: absolute; inset: -40px; z-index: -1; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(180,177,255,.35), transparent);
+    }
+    .screen-tag {
+      position: absolute; left: 50%; bottom: -16px; transform: translateX(-50%);
+      white-space: nowrap; padding: 8px 16px; border-radius: 999px; font-size: .85rem; color: var(--ink-soft);
+    }
+
+    @media (max-width: 860px) {
+      .hero { grid-template-columns: 1fr; gap: 48px; padding-top: 28px; text-align: center; }
+      .lede { margin-left: auto; margin-right: auto; }
+      .buttons { justify-content: center; }
+      .screen { margin: 0 auto; max-width: 420px; }
+    }
+
+    /* ---------- sections ---------- */
+    section { padding: 56px 0; }
+    .section-head { text-align: center; max-width: 640px; margin: 0 auto 36px; }
+    h2 { font-size: clamp(1.75rem, 4vw, 2.6rem); line-height: 1.12; letter-spacing: -0.025em; margin: 0 0 12px; font-weight: 700; }
+    .section-head p { color: var(--ink-soft); margin: 0; font-size: 1.08rem; }
+
+    /* keyboard feature */
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .shot { margin: 0; padding: 10px; border-radius: 30px; }
+    .shot button { all: unset; display: block; width: 100%; cursor: zoom-in; border-radius: 22px; overflow: hidden; }
+    .shot button:focus-visible { outline: 2px solid var(--lavender); outline-offset: 3px; }
+    .shot img { width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; transition: transform .35s ease; }
+    .shot button:hover img { transform: scale(1.025); }
+    .shot figcaption { padding: 14px 8px 6px; }
+    .shot figcaption strong { display: block; font-size: 1.02rem; }
+    .shot figcaption span { color: var(--ink-soft); font-size: .93rem; }
+    @media (max-width: 700px) { .split { grid-template-columns: 1fr; } }
+
+    .keys { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 26px auto 0; max-width: 720px; }
+    .key {
+      display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px 7px 7px; border-radius: 999px;
+      background: var(--glass); border: 1px solid var(--edge); font-size: .92rem; color: var(--ink-soft);
+    }
+    .key kbd {
+      display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%;
+      background: rgba(255,255,255,.14); color: var(--ink); font: 600 .9rem "Inter", sans-serif;
+    }
+
+    .keys-note { text-align: center; color: var(--ink-soft); max-width: 640px; margin: 22px auto 0; }
+    .keys-note em { white-space: nowrap; font-style: normal; font-family: ui-monospace, monospace; color: var(--ink); background: var(--glass); padding: 2px 8px; border-radius: 8px; }
+
+    /* highlights */
+    .highlights { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .highlights .card { padding: 26px; }
+    .highlights h3 { margin: 14px 0 6px; font-size: 1.12rem; }
+    .highlights p { margin: 0; color: var(--ink-soft); font-size: .96rem; }
+    .hl-icon {
+      width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center;
+      background: linear-gradient(160deg, rgba(180,177,255,.35), rgba(42,138,131,.25));
+      border: 1px solid var(--edge); box-shadow: inset 0 1px 0 var(--edge-hi);
+    }
+    .hl-icon svg { width: 24px; height: 24px; fill: none; stroke: var(--ink); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    @media (max-width: 900px) { .highlights { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 600px) { .highlights { grid-template-columns: 1fr; } }
+
+    /* keyboard phones */
+    .kb { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; padding: 40px; align-items: center; }
+    .kb h2 { margin-bottom: 12px; }
+    .kb p { color: var(--ink-soft); margin: 0; font-size: 1.05rem; }
+    .kb-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+    .kb-list li { display: flex; align-items: center; gap: 14px; color: var(--ink-soft); }
+    .kb-list kbd {
+      flex: none; display: grid; place-items: center; width: 44px; height: 40px; border-radius: 10px;
+      font: 600 1rem "Inter", sans-serif; color: var(--ink);
+      background: linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,.06));
+      border: 1px solid var(--edge); box-shadow: 0 3px 0 rgba(0,0,0,.35), inset 0 1px 0 var(--edge-hi);
+    }
+    @media (max-width: 760px) { .kb { grid-template-columns: 1fr; padding: 28px 22px; } }
+
+    /* tour gallery: grid on big screens, swipeable row on phones */
+    .tour { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+    @media (max-width: 1000px) { .tour { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 560px) {
+      .tour {
+        display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 14px;
+        margin: 0 -16px; padding: 4px 16px 18px; scrollbar-width: none;
+      }
+      .tour::-webkit-scrollbar { display: none; }
+      .tour .shot { flex: 0 0 82%; scroll-snap-align: center; }
+      .swipe-hint { display: block !important; }
+    }
+    .swipe-hint { display: none; text-align: center; color: var(--ink-faint); font-size: .85rem; margin-top: 4px; }
+
+    /* looks strip */
+    .looks { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .looks .shot { padding: 8px; border-radius: 26px; }
+    .looks .shot button { border-radius: 19px; }
+    @media (max-width: 860px) { .looks { grid-template-columns: repeat(2, 1fr); } }
+
+    /* how it works */
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; counter-reset: step; }
+    .steps .card { padding: 26px; position: relative; }
+    .steps .card::before {
+      counter-increment: step; content: counter(step);
+      display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; margin-bottom: 16px;
+      font-weight: 700; color: #15132b; background: linear-gradient(180deg, #d2d0ff, var(--lavender-2));
+    }
+    .steps h3 { margin: 0 0 6px; font-size: 1.1rem; }
+    .steps p { margin: 0; color: var(--ink-soft); }
+    @media (max-width: 760px) { .steps { grid-template-columns: 1fr; } }
+
+    /* price */
+    .price { max-width: 520px; margin: 0 auto; padding: 38px 30px; text-align: center; }
+    .price img { width: 76px; height: 76px; border-radius: 20px; margin: 0 auto 14px; box-shadow: 0 10px 30px rgba(0,0,0,.4); }
+    .price .label { color: var(--ink-soft); font-weight: 500; }
+    .price .amount { font-size: 3.4rem; font-weight: 800; letter-spacing: -0.03em; margin: 2px 0 0; }
+    .price .once { color: var(--ink-faint); font-size: .95rem; }
+    .price ul { list-style: none; padding: 0; margin: 22px 0 28px; text-align: left; display: inline-block; }
+    .price li { padding: 5px 0; color: var(--ink-soft); }
+    .price li::before { content: "✓"; color: var(--lavender); font-weight: 700; margin-right: 10px; }
+    .price .btn { width: 100%; }
+
+    /* faq */
+    .faq { max-width: 760px; margin: 0 auto; }
+    details { padding: 18px 22px; margin-bottom: 12px; border-radius: 20px; }
+    summary { cursor: pointer; font-weight: 600; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: "+"; color: var(--ink-faint); font-weight: 400; font-size: 1.3rem; line-height: 1; }
+    details[open] summary::after { content: "–"; }
+    details p, details ol { color: var(--ink-soft); margin: 12px 0 0; }
+    details ol { padding-left: 20px; }
+    details li { margin: 4px 0; }
+
+    footer { padding: 40px 0 56px; text-align: center; color: var(--ink-faint); font-size: .9rem; }
+    footer .links { display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; margin-bottom: 12px; }
+    footer .links a { color: var(--ink-soft); text-decoration: none; }
+    footer .links a:hover { color: var(--ink); }
+    footer .credits { margin-top: 6px; font-size: .82rem; }
+
+    /* full-size screenshot viewer */
+    dialog {
+      padding: 0; border: none; background: transparent; max-width: min(92vw, 720px); width: 100%;
+    }
+    dialog::backdrop { background: rgba(5, 5, 12, .82); backdrop-filter: blur(6px); }
+    dialog img { width: 100%; border-radius: 28px; }
+    dialog p { text-align: center; color: var(--ink-soft); margin: 14px 0 0; }
+    dialog .close {
+      position: absolute; top: 12px; right: 12px; width: 40px; height: 40px; border-radius: 50%;
+      border: 1px solid var(--edge); background: rgba(0,0,0,.5); color: #fff; font-size: 1.2rem; cursor: pointer;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; scroll-behavior: auto !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="backdrop" aria-hidden="true"><span></span><span></span><span></span></div>
+
+  <header class="wrap">
+    <nav class="nav">
+      <a class="brand" href="#">
+        <img src="assets/icon-256.png" alt="" width="36" height="36">
+        Lumenous
+      </a>
+      <div class="nav-links">
+        <a href="#tour">Tour</a>
+        <a href="#price">Price</a>
+        <a href="#faq">Help</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <!-- ======================= HERO ======================= -->
+    <section class="hero" style="padding-top:32px">
+      <div>
+        <span class="eyebrow"><b>New</b> Made for square keyboard phones</span>
+        <h1>Liquid glass for your <span class="shine">Android home screen.</span></h1>
+        <p class="lede">
+          Lumenous is a calm, fluid home screen made of light and glass — built for
+          1:1 keyboard phones like the Zinwa Q25 and Unihertz Titan 2.
+        </p>
+        <div class="buttons">
+          <!-- DOWNLOAD: always the newest release on GitHub -->
+          <a class="btn btn-primary" href="https://github.com/DeadElliot22/lumenous/releases/latest/download/Lumenous.apk">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+            Download APK
+          </a>
+          <!-- BUY: your Gumroad product (appears twice on this page) -->
+          <a class="btn btn-glass" href="https://deadelliot22.gumroad.com/l/lumenous">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="15" r="4"/><path d="m10.8 12.2 8.7-8.7"/><path d="m17 6 3 3"/><path d="m15 8 2 2"/></svg>
+            Buy License Key
+          </a>
+        </div>
+        <p class="fine">Free download · Full 7-day trial, no sign-up · Android 13+</p>
+      </div>
+
+      <div class="screen glass">
+        <video src="assets/demo.mp4" poster="assets/demo-poster.webp"
+               autoplay muted loop playsinline preload="metadata"
+               aria-label="Lumenous home screen opening the App Library"></video>
+        <span class="screen-tag glass">Recorded on a Zinwa Q25 · 720×720</span>
+      </div>
+    </section>
+
+    <!-- ======================= HIGHLIGHTS ======================= -->
+    <section>
+      <div class="section-head">
+        <h2>Not a blur filter. Real glass.</h2>
+        <p>Every pane in Lumenous is drawn by a GPU shader that bends, magnifies and frosts
+           whatever is behind it, then lights the rim like thick glass.</p>
+      </div>
+      <div class="highlights">
+        <div class="card glass">
+          <div class="hl-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3c3.5 4.2 6 7.3 6 10.5a6 6 0 0 1-12 0C6 10.3 8.5 7.2 12 3Z"/></svg></div>
+          <h3>Glass that bends</h3>
+          <p>The dock and tab bars refract what scrolls underneath them — messages, notes, the forecast — not just the wallpaper.</p>
+        </div>
+        <div class="card glass">
+          <div class="hl-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5h16v10H8l-4 4Z"/><path d="M8 9h8M8 12h5"/></svg></div>
+          <h3>The Hub</h3>
+          <p>Every notification as one conversation card, inspired by the BlackBerry Hub. Clear it in one place and it's gone from both.</p>
+        </div>
+        <div class="card glass">
+          <div class="hl-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 10h.01M11 10h.01M15 10h.01M7 14h10"/></svg></div>
+          <h3>Type to do anything</h3>
+          <p>Press any key on Home and search opens. One symbol turns it into a message, call, to-do, note, event, timer or alarm.</p>
+        </div>
+        <div class="card glass">
+          <div class="hl-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></div>
+          <h3>Depth, found by on-device AI</h3>
+          <p>Pick any photo and Lumenous finds the person, pet or car in it, then tucks the clock behind them. Nothing is uploaded.</p>
+        </div>
+        <div class="card glass">
+          <div class="hl-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="7" cy="7" r="3"/><circle cx="17" cy="7" r="3"/><circle cx="7" cy="17" r="3"/><circle cx="17" cy="17" r="3"/></svg></div>
+          <h3>Bubbles that become apps</h3>
+          <p>Controls, Weather, Music, Calendar, Notes and To-do bubbles spring open into full built-in apps, all in glass.</p>
+        </div>
+        <div class="card glass">
+          <div class="hl-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div>
+          <h3>Private by design</h3>
+          <p>No root, no Accessibility access, no ads, no account. Your notifications, notes and photos never leave the phone.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= KEYBOARD ======================= -->
+    <section>
+      <div class="section-head">
+        <h2>Just start typing.</h2>
+        <p>On a keyboard phone, the fastest button is the one you're already touching.
+           Press any letter on the home screen and Lumenous is already searching —
+           apps, contacts, settings, notes, events and messages.</p>
+      </div>
+      <div class="split">
+        <figure class="shot glass">
+          <button type="button" data-full="assets/shots/search-message.webp" data-caption="Type @ and a name to message someone, without opening an app.">
+            <img src="assets/shots/search-message.webp" alt="Typing '@gary We still on for sunday?' in Lumenous search, with Gary suggested as the recipient" loading="lazy" width="720" height="720">
+          </button>
+          <figcaption><strong>@gary We still on for Sunday?</strong><span>Message anyone in one line.</span></figcaption>
+        </figure>
+        <figure class="shot glass">
+          <button type="button" data-full="assets/shots/search-event.webp" data-caption="Write an event in plain words. Lumenous fills in the date and time.">
+            <img src="assets/shots/search-event.webp" alt="Typing '* Afternoon banquet at Hospital July 5' and Lumenous turning it into a calendar event" loading="lazy" width="720" height="720">
+          </button>
+          <figcaption><strong>* Afternoon banquet July 5</strong><span>Plain words in, calendar event out.</span></figcaption>
+        </figure>
+      </div>
+      <div class="keys" aria-label="Search shortcuts">
+        <span class="key"><kbd>@</kbd>Message</span>
+        <span class="key"><kbd>#</kbd>Call</span>
+        <span class="key"><kbd>-</kbd>To-do</span>
+        <span class="key"><kbd>!</kbd>Note</span>
+        <span class="key"><kbd>*</kbd>Event</span>
+        <span class="key"><kbd>+</kbd>Timer</span>
+        <span class="key"><kbd>:</kbd>Alarm</span>
+        <span class="key"><kbd>?</kbd>Ask</span>
+      </div>
+      <p class="keys-note">Due dates come straight from your words — <em>-call bank fri 3pm</em> lands on Friday at 3 PM.
+         Pick each contact's favourite chat app once, and @ always sends it the right way.</p>
+    </section>
+
+    <!-- ======================= TOUR ======================= -->
+    <section id="tour">
+      <div class="section-head">
+        <h2>Everything, one glance away.</h2>
+        <p>Your messages, plans and quick settings live right on the home screen —
+           in glass that lets your wallpaper shine through.</p>
+      </div>
+      <div class="tour">
+        <figure class="shot glass">
+          <button type="button" data-full="assets/shots/hub.webp" data-caption="People and urgent messages rise to the top. Clear a card here and it's cleared from Android's notifications too.">
+            <img src="assets/shots/hub.webp" alt="The Hub showing notifications sorted into tabs" loading="lazy" width="720" height="720">
+          </button>
+          <figcaption><strong>The Hub</strong><span>Sorted, and in sync with Android both ways.</span></figcaption>
+        </figure>
+        <figure class="shot glass">
+          <button type="button" data-full="assets/shots/hub-reply.webp" data-caption="Open a card for the whole conversation and reply right there. New messages also drop in as glass pop-ups over any app.">
+            <img src="assets/shots/hub-reply.webp" alt="Replying to a message from inside the Hub" loading="lazy" width="720" height="720">
+          </button>
+          <figcaption><strong>Reply in place</strong><span>Whole conversations, without opening the app.</span></figcaption>
+        </figure>
+        <figure class="shot glass">
+          <button type="button" data-full="assets/shots/todo.webp" data-caption="Pinned and overdue first. Tick one off right on the home screen.">
+            <img src="assets/shots/todo.webp" alt="To-do list card over the home screen" loading="lazy" width="720" height="720">
+          </button>
+          <figcaption><strong>To-dos</strong><span>Tick them off right on Home.</span></figcaption>
+        </figure>
+        <figure class="shot glass">
+          <button type="button" data-full="assets/shots/calendar.webp" data-caption="A full calendar with month and list views.">
+            <img src="assets/shots/calendar.webp" alt="Month calendar in glass" loading="lazy" width="720" height="720">
+          </button>
+          <figcaption><strong>Calendar</strong><span>Your month, in glass.</span></figcaption>
+        </figure>
+        <figure class="shot glass">
+          <button type="button" data-full="assets/shots/controls.webp" data-caption="Wi-Fi, Bluetooth, torch, Do Not Disturb, brightness and volume, always showing their real state.">
+            <img src="assets/shots/controls.webp" alt="Controls panel with Wi-Fi, Bluetooth, brightness and volume" loading="lazy" width="720" height="720">
+          </button>
+          <figcaption><strong>Controls</strong><span>Toggles and sliders, no pull-down.</span></figcaption>
+        </figure>
+        <figure class="shot glass">
+          <button type="button" data-full="assets/shots/notes.webp" data-caption="Notes sorted into Personal, Work and Private.">
+            <img src="assets/shots/notes.webp" alt="Notes list" loading="lazy" width="720" height="720">
+          </button>
+          <figcaption><strong>Notes</strong><span>Personal, Work and Private.</span></figcaption>
+        </figure>
+        <figure class="shot glass">
+          <button type="button" data-full="assets/shots/private-notes.webp" data-caption="A Private folder behind your own passcode. It locks itself when you leave, and the passcode is never stored.">
+            <img src="assets/shots/private-notes.webp" alt="Private notes locked behind a passcode" loading="lazy" width="720" height="720">
+          </button>
+          <figcaption><strong>Private notes</strong><span>Locked behind a passcode.</span></figcaption>
+        </figure>
+        <figure class="shot glass">
+          <button type="button" data-full="assets/shots/settings.webp" data-caption="Tune the glass, clock, fonts, dock, icons and more.">
+            <img src="assets/shots/settings.webp" alt="Lumenous settings list" loading="lazy" width="720" height="720">
+          </button>
+          <figcaption><strong>Make it yours</strong><span>Glass, clock, fonts, icons, dock.</span></figcaption>
+        </figure>
+      </div>
+      <p class="swipe-hint">Swipe for more →</p>
+    </section>
+
+    <!-- ======================= LOOKS ======================= -->
+    <section>
+      <div class="section-head">
+        <h2>One home screen. Endless looks.</h2>
+        <p>Text on the glass flips between white and near-black by itself, so it stays readable
+           on any wallpaper. Add lens-smooth blur, tilt parallax, any icon pack and your own fonts.</p>
+      </div>
+      <div class="looks">
+        <figure class="shot glass">
+          <button type="button" data-full="assets/shots/home-depth.webp" data-caption="Depth effect: the car sits in front of the clock.">
+            <img src="assets/shots/home-depth.webp" alt="Home screen with a car photo standing in front of the clock" loading="lazy" width="720" height="720">
+          </button>
+        </figure>
+        <figure class="shot glass">
+          <button type="button" data-full="assets/shots/home-turtle.webp" data-caption="Teal glass to match an underwater wallpaper.">
+            <img src="assets/shots/home-turtle.webp" alt="Home screen with a sea turtle wallpaper and teal glass" loading="lazy" width="720" height="720">
+          </button>
+        </figure>
+        <figure class="shot glass">
+          <button type="button" data-full="assets/shots/home-forest.webp" data-caption="A dark, quiet forest look.">
+            <img src="assets/shots/home-forest.webp" alt="Home screen with a dark forest wallpaper" loading="lazy" width="720" height="720">
+          </button>
+        </figure>
+        <figure class="shot glass">
+          <button type="button" data-full="assets/shots/home-sky.webp" data-caption="Bright blue glass under an open sky.">
+            <img src="assets/shots/home-sky.webp" alt="Home screen with a blue sky wallpaper" loading="lazy" width="720" height="720">
+          </button>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ======================= KEYBOARD PHONES ======================= -->
+    <section>
+      <div class="kb glass">
+        <div>
+          <h2>Built for keyboard phones first.</h2>
+          <p>Most launchers are stretched to fit a 3.5" square screen. Lumenous was designed for it —
+             big tap targets, square layouts, and every list scrolls with the trackpad.</p>
+        </div>
+        <ul class="kb-list">
+          <li><kbd>⌫</kbd><span>Backspace on Home opens the Hub</span></li>
+          <li><kbd>A</kbd><span>Hold a letter to launch your shortcut</span></li>
+          <li><kbd>⇧</kbd><span>Shift and Alt latch: tap once, or twice to lock</span></li>
+          <li><kbd>↵</kbd><span>Enter opens the top result, Esc goes back</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ======================= HOW IT WORKS ======================= -->
+    <section>
+      <div class="section-head"><h2>Try it free. Keep it forever.</h2></div>
+      <div class="steps">
+        <div class="card glass">
+          <h3>Download &amp; install</h3>
+          <p>Get the APK on your phone, open it, and set Lumenous as your home app.</p>
+        </div>
+        <div class="card glass">
+          <h3>Use everything for 7 days</h3>
+          <p>The trial starts the first time you open it. Every feature is on. No account.</p>
+        </div>
+        <div class="card glass">
+          <h3>Unlock with one key</h3>
+          <p>Buy a key, paste it in Settings → Lumenous License. One payment, no subscription.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= PRICE ======================= -->
+    <section id="price">
+      <div class="price glass">
+        <img src="assets/icon-256.png" alt="" width="76" height="76">
+        <div class="label">Lumenous License</div>
+        <!-- PRICE: change this if you change your Gumroad price -->
+        <div class="amount">$4.99</div>
+        <div class="once">one-time · yours forever</div>
+        <ul>
+          <li>All glass effects and themes</li>
+          <li>Your own fonts, icon packs and clock styles</li>
+          <li>Live glass, depth effect, blur and parallax</li>
+          <li>Every future update</li>
+        </ul>
+        <a class="btn btn-primary" href="https://deadelliot22.gumroad.com/l/lumenous">Buy License Key</a>
+        <p class="fine">After the trial, Lumenous keeps working as your home screen. The premium look
+           switches off until you unlock, and all your settings are saved.</p>
+      </div>
+    </section>
+
+    <!-- ======================= FAQ ======================= -->
+    <section id="faq">
+      <div class="section-head"><h2>Help &amp; FAQ</h2></div>
+      <div class="faq">
+        <details class="glass">
+          <summary>How do I install an APK?</summary>
+          <ol>
+            <li>Tap <strong>Download APK</strong> on your phone.</li>
+            <li>Open the downloaded file. If Android asks, allow your browser to <em>install unknown apps</em>.</li>
+            <li>Tap <strong>Install</strong>, open Lumenous, and choose it as your home app.</li>
+          </ol>
+        </details>
+        <details class="glass">
+          <summary>Which phones does it work on?</summary>
+          <p>Any phone with Android 13 or newer and a 64-bit processor. It's designed first for square
+             1:1 screens with keyboards (Zinwa Q25, Unihertz Titan 2) — try it free on yours and see.</p>
+        </details>
+        <details class="glass">
+          <summary>I bought a key. Where do I put it?</summary>
+          <p>Your key is in your Gumroad receipt email and your Gumroad Library. In Lumenous, open
+             <strong>Settings → Lumenous License</strong>, paste it and tap <strong>Activate</strong>.
+             You need internet for that one moment; after that it works offline.</p>
+        </details>
+        <details class="glass">
+          <summary>What happens when the trial ends?</summary>
+          <p>Lumenous still works as your home screen and opens all your apps. Glass effects, themes and
+             imported fonts switch off, and a small reminder appears now and then. Your settings are kept,
+             so everything comes back the moment you unlock.</p>
+        </details>
+        <details class="glass">
+          <summary>How do I update?</summary>
+          <p>Lumenous tells you in Settings when a new version is out. Download it from this page and install
+             it over the old one. Your settings and license stay.</p>
+        </details>
+        <details class="glass">
+          <summary>Can I use one key on more than one phone?</summary>
+          <p>Yes, a key works on a few of your own devices. If you hit a limit, email me and I'll sort it out.</p>
+        </details>
+        <details class="glass">
+          <summary>How do I go back to my old home screen?</summary>
+          <p>Open <strong>Settings → Lumenous License → Choose a different home app</strong>, or Android's
+             <strong>Settings → Apps → Default apps → Home app</strong>.</p>
+        </details>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap">
+    <div class="links">
+      <a href="https://github.com/DeadElliot22/lumenous/releases">All releases</a>
+      <a href="privacy.html">Privacy</a>
+      <!-- CONTACT: replace with your own email -->
+      <a href="mailto:you@example.com">Contact</a>
+    </div>
+    <div>© <span id="y">2026</span> Lumenous</div>
+    <div class="credits">Wallpapers in screenshots from Unsplash · Icons shown: iLiquid icon pack</div>
+  </footer>
+
+  <!-- full-size screenshot viewer -->
+  <dialog id="viewer" aria-label="Screenshot">
+    <button class="close" type="button" aria-label="Close">✕</button>
+    <img alt="">
+    <p></p>
+  </dialog>
+
+  <script>
+    document.getElementById("y").textContent = new Date().getFullYear();
+
+    const viewer = document.getElementById("viewer");
+    const vImg = viewer.querySelector("img");
+    const vCap = viewer.querySelector("p");
+    document.querySelectorAll("[data-full]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        vImg.src = btn.dataset.full;
+        vImg.alt = btn.querySelector("img").alt;
+        vCap.textContent = btn.dataset.caption || "";
+        viewer.showModal();
+      });
+    });
+    viewer.querySelector(".close").addEventListener("click", () => viewer.close());
+    viewer.addEventListener("click", e => { if (e.target === viewer) viewer.close(); });
+  </script>
+</body>
+</html>

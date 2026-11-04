@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lumenous Privacy Policy</title>
+  <meta name="theme-color" content="#0c0b18">
+  <link rel="icon" href="assets/favicon.ico" sizes="any">
+  <link rel="icon" href="assets/favicon.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg: #0c0b18; --ink: #efeff8; --soft: #a9abc4; --card: rgba(255,255,255,.06); --edge: rgba(255,255,255,.14); }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: "Inter", system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.65; -webkit-font-smoothing: antialiased; }
+    .glow { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+    .glow span { position: absolute; border-radius: 50%; filter: blur(90px); }
+    .glow span:nth-child(1) { width: 520px; height: 520px; background: #7a56c8; opacity: .35; top: -200px; left: -160px; }
+    .glow span:nth-child(2) { width: 480px; height: 480px; background: #2a8a83; opacity: .25; bottom: -200px; right: -140px; }
+    main { max-width: 720px; margin: 40px auto; padding: 36px 32px; background: var(--card); border: 1px solid var(--edge); border-radius: 28px; backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); }
+    @media (max-width: 760px) { main { margin: 16px; padding: 26px 20px; } }
+    .back { display: inline-flex; align-items: center; gap: 10px; color: var(--soft); text-decoration: none; font-weight: 500; }
+    .back img { width: 28px; height: 28px; border-radius: 8px; }
+    h1 { margin: 22px 0 4px; font-size: 2rem; letter-spacing: -0.02em; }
+    h2 { font-size: 1.15rem; margin-top: 30px; }
+    p, li { color: var(--soft); }
+    a { color: inherit; }
+  </style>
+</head>
+<body>
+<div class="glow" aria-hidden="true"><span></span><span></span></div>
+<main>
+  <a class="back" href="index.html"><img src="assets/icon-256.png" alt="">← Back to Lumenous</a>
+  <h1>Privacy Policy</h1>
+  <p><em>Last updated: November 4, 2026</em></p>
+
+  <p>Lumenous is a home screen app built to work on your phone without accounts, ads or tracking.
+     This page explains what it reads, and the few times it talks to the internet.</p>
+
+  <h2>What stays on your phone</h2>
+  <ul>
+    <li><strong>Notifications</strong> (for the Hub): read with Android's notification access, shown only inside Lumenous, and never uploaded.</li>
+    <li><strong>Contacts and calendar</strong>: used to search, message, call and show your events. Never uploaded.</li>
+    <li><strong>Notes, to-dos and private notes</strong>: stored only on your phone. Private notes are protected by a passcode that is never stored itself, only a salted one-way fingerprint of it.</li>
+    <li><strong>Wallpapers and photos</strong>: the depth effect's subject finder runs on your phone. Your photos are never uploaded.</li>
+    <li><strong>App usage</strong>: "most opened" counts are kept on your phone. Screen time uses Android's own data, only if you allow it.</li>
+  </ul>
+
+  <h2>What goes online</h2>
+  <ul>
+    <!-- EDIT: name your weather provider here, e.g. "Open-Meteo" -->
+    <li><strong>Weather</strong>: to show the forecast, Lumenous sends the city or approximate location you choose to a weather service. Nothing else is sent with it.</li>
+    <li><strong>Optional font download</strong>: if you tap the font download, the font files are fetched from GitHub.</li>
+    <li><strong>License activation</strong> (GitHub version): when you activate a key, Lumenous sends that key to Gumroad, the store that sold it, to check it's valid. It may check again about once a month so refunded keys stop working. Only the key is sent.</li>
+    <li><strong>Update checks</strong> (GitHub version): about once a day, Lumenous asks GitHub whether a newer version exists. No personal information is sent.</li>
+    <li><strong>Google Play purchases</strong> (Play version): handled by Google Play under Google's privacy policy.</li>
+  </ul>
+
+  <h2>What Lumenous never does</h2>
+  <ul>
+    <li>No account or sign-up.</li>
+    <li>No ads, analytics or tracking libraries.</li>
+    <li>No root and no Accessibility service access.</li>
+    <li>Nothing is sold or shared with anyone.</li>
+  </ul>
+
+  <h2>Children</h2>
+  <p>Lumenous does not knowingly collect any information from anyone, including children.</p>
+
+  <h2>Changes and contact</h2>
+  <p>If this policy changes, the new version will be posted on this page. Questions? Email
+     <a href="mailto:you@example.com">you@example.com</a>.</p>
+</main>
+</body>
+</html>
